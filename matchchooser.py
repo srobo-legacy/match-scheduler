@@ -21,6 +21,7 @@ class Team:
 	def __init__(self, number):
 		self.number = number
 		self.matches = []
+		self.opponents = []
 
 	def get_number_of_matches(self):
 		return len(self.matches)
@@ -30,6 +31,14 @@ class Team:
 		for i in self.matches:
 			r += str(i._number) + " "
 
+		return r
+
+	def opponents_to_str(self):
+		r = ""
+		
+		for team in self.opponents:
+			r += str(team.number) + " "
+		
 		return r
 
 class Match:
@@ -57,13 +66,102 @@ class Match:
 			r += str(t.number) + " "
 
 		return r
-
+	
+	def setup_opponents(self):
+		for t1 in self._teams:
+			for t2 in self._teams:
+				if t1 != t2 and t2 not in t1.opponents:
+					t1.opponents.append(t2)
+					
 
 def gcd(a, b):
 	if b == 0:
 		return a
 	else:
 		return gcd(b, a%b)
+
+def min_idle_matches(teams):
+	min = 5000
+	for team in teams:
+		prev = team.matches[0]
+		for i in range(1, len(team.matches)):
+			if team.matches[i]._number - prev._number - 1 < min:
+				min = team.matches[i]._number - prev._number - 1
+			prev = team.matches[i]
+	return min
+
+def average_idle_matches(teams):
+	sum = 0
+	n = 0
+	for team in teams:
+		prev = team.matches[0]
+		for i in range(1, len(team.matches)):
+			
+			sum += team.matches[i]._number - prev._number - 1
+			n += 1
+			prev = team.matches[i]
+	return (1.0*sum)/n
+
+def deviation_idle_matches(teams):
+	sumsquared = 0
+	sum = 0
+	n = 0
+	
+	for team in teams:
+		prev = team.matches[0]._number
+		for i in xrange(1, len(team.matches)):
+			numb = team.matches[i]._number
+			x = numb - prev - 1
+			n += 1
+			sum += x
+			sumsquared += x*x
+			prev = numb
+	return ((sumsquared-((sum)**2/float(n)))/(n-1))**0.5
+
+def allvall(teams):
+	for team in teams:
+		if len(team.opponents) < len(teams)-5:
+			return False
+	return True
+	
+def opponent_sum(teams):
+	sum = 0
+	for team in teams:
+		sum += len(team.opponents)
+	return sum
+
+def findgoodschedule(desired_matches, number_of_teams, slots_per_match, byematches = False, iterations = 5000):
+	match, teams = setup_matches(desired_matches, number_of_teams, slots_per_match, byematches = False)
+	
+	while opponent_sum(teams) < number_of_teams*2:
+		match, teams = setup_matches(desired_matches, number_of_teams, slots_per_match, byematches)
+		print opponent_sum(teams)
+	i = 0
+	print "cows"
+	print deviation_idle_matches(teams)
+	min = deviation_idle_matches(teams)
+	best_match, best_teams = match, teams
+	for i in range(0, iterations):
+			match, teams = setup_matches(desired_matches, number_of_teams, slots_per_match, byematches)
+			dev = deviation_idle_matches(teams)
+			#print i
+			#print opponent_sum(teams)
+			if dev < min  and opponent_sum(teams) > opponent_sum(best_teams):
+				best_match = match
+				best_teams = teams
+				min = dev
+				print dev
+				print opponent_sum(best_teams)/(1.0*len(teams))
+				print i
+			#if (i % 400000000000 == 0):
+			#	print i
+			#	print min
+			#	print dev
+			
+	print opponent_sum(best_teams)/(1.0*len(best_teams))
+	print deviation_idle_matches(best_teams)
+	return best_match, best_teams
+
 
 def max_matches_per_team(desired_matches, teams, slots_per_match):
 	return (desired_matches*slots_per_match) / teams
@@ -109,7 +207,7 @@ def setup_matches(desired_matches, number_of_teams, slots_per_match, byematches 
 				if not broken:
 					matches.append(match)
 					return matches,teams
-
+		match.setup_opponents()
 		matches.append(match)
 
 	return matches, teams
@@ -161,14 +259,17 @@ if __name__ == "__main__":
 		print (slots/baseMatches+1)*baseMatches/teamsPerMatch, "matches"
 		print "continuing with unfair number of matches"
 
-	matches, team_o = setup_matches(desiredMatches, teams, teamsPerMatch, allowByes)
+	matches, team_o = findgoodschedule(desiredMatches, teams, teamsPerMatch, allowByes)
 
 	for i in team_o:
 		print "Team %d in %d matches:" % (i.number, i.get_number_of_matches()), i.get_matches()
-#	random.shuffle(matches)
+#   random.shuffle(matches)
 	for m in matches:
 		print "Match %d:" % m._number, m.teams()
 
+	for team in team_o:
+			print "Team number %d opposes:" % (team.number), team.opponents_to_str(), "total of %d opponents" % len(team.opponents)
+			
 	print "writing matches to matches.csv and matches.sql"
 	csv = open("matches.csv", "w")
 	sql = open("matches.sql", "w")
@@ -184,6 +285,22 @@ if __name__ == "__main__":
 				csv.write(",")
 			else:
 				csv.write("\n")
+		
+		# Generate sql
+		colours = [ "red", "green", "blue", "yellow" ]
+
+		s = "insert into matches set number = %i, time = %i" % (n, time.mktime(match_time.timetuple()))
+		match_time += MATCH_INTERVAL
+
+		if skip_lunch and match_time >= LUNCH and match_time < LUNCH_END:
+			match_time = LUNCH_END
+
+		cnum = 0
+
+		for team in [x.number for x in match._teams]:
+			s += ", %s = %i" % (colours[cnum], team)
+			cnum += 1
+		s += ";\n"
 
 		# Generate sql
 		colours = [ "red", "green", "blue", "yellow" ]
