@@ -42,11 +42,12 @@ public class MatchAnnealer {
 			for (int i = 0; i < RNG.nextInt(MUTATION_STEPS); i++) {
 				mutate(workingMatches, workingTeams);
 			}
-			// do some cool computation
+			// compute the new sum of opponents and the standard deviation of match times
 			int newOpponentSum = computeOpponentSum(workingTeams);
 			float newStdev = stdevComputation(workingTeams);
 
-			// thousands of ponies
+			// if the mutated match is better than the previous one, use it as
+			// the new parent
 			if (newStdev <= currStdev && newOpponentSum >= opponentSum
 					&& (newStdev != currStdev || newOpponentSum != opponentSum)) {
 				currStdev = newStdev;
