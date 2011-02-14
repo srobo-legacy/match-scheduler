@@ -21,11 +21,11 @@ public class Main {
      */
     public static void main(String[] args) {
 
-        if (args.length != 6) {
+        if (args.length != 6 && args.length != 4) {
             System.out.println("Wrong number of arguments");
-            System.out.println("usage is: matchscheduler [nmatches] [nteams]"
-                    + " [teams per match] [allow byes] [min number of teams in a bye match]"
-                    + " [max number of teams in a bye match]");
+            System.out.println("usage is: matchscheduler [nteams] [nmatches]"
+                    + " [teams per match] [allow byes] <[min number of teams in a bye match]"
+                    + " [max number of teams in a bye match]>");
             System.exit(1);
         }
 
@@ -39,8 +39,6 @@ public class Main {
             int num_matches = Integer.parseInt(args[1]);
             int match_size = Integer.parseInt(args[2]);
             String byes = args[3];
-            int min_byes = Integer.parseInt(args[4]);
-            int max_byes = Integer.parseInt(args[5]);
 
             // setup match constraints
             MatchConstraints mc = new MatchConstraints();
@@ -49,6 +47,8 @@ public class Main {
             mc.setNumberOfMatches(num_matches);
             mc.setTeamsPerMatch(match_size);
             if (byes.equals("true")) {
+                int min_byes = Integer.parseInt(args[4]);
+                int max_byes = Integer.parseInt(args[5]);
                 mc.enableByes();
                 mc.setMinByeSize(min_byes);
                 mc.setMaxByeSize(max_byes);
