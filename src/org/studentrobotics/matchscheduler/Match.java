@@ -99,5 +99,10 @@ public class Match {
 		mTeamCache.clear();
 		mTeamCache.addAll(mTeams);
 	}
+	
+	@Override
+	public int hashCode() {
+	    return mMatchNumber;
+	}
 
 }

@@ -124,5 +124,10 @@ public class Team implements Comparable<Team> {
 
 		return Collections.unmodifiableList(sortOpponents);
 	}
+	
+	@Override
+	public int hashCode() {
+	    return mNumber;
+	}
 
 }
