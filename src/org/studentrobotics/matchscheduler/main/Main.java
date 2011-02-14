@@ -20,14 +20,17 @@ public class Main {
      * @param args
      */
     public static void main(String[] args) {
-        
-        if(args.length!=6){
+
+        if (args.length != 6) {
             System.out.println("Wrong number of arguments");
+            System.out.println("usage is: matchscheduler [nmatches] [nteams]"
+                    + "[teams per match] [allow byes] [min number of teams in a bye match]"
+                    + "[max number of teams in a bye match]");
             System.exit(1);
         }
-        
+
         else {
-        
+
             // add some serializers
             serializers.add(new PrintMatchesSerializer());
             serializers.add(new TeamSerializer());
