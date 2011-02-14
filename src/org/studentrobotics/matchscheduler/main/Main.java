@@ -48,27 +48,25 @@ public class Main {
             mc.setNumberOfTeams(num_teams);
             mc.setNumberOfMatches(num_matches);
             mc.setTeamsPerMatch(match_size);
-            if(byes.equals("true")){
+            if (byes.equals("true")) {
                 mc.enableByes();
                 mc.setMinByeSize(min_byes);
                 mc.setMaxByeSize(max_byes);
             }
 
-            /*mc.setNumberOfTeams(13);
-            mc.setNumberOfMatches(23);
-            mc.setTeamsPerMatch(4);
-            mc.enableByes();
-            mc.setMinByeSize(2);
-            mc.setMaxByeSize(3);
-            */
+            /*
+             * mc.setNumberOfTeams(13); mc.setNumberOfMatches(23);
+             * mc.setTeamsPerMatch(4); mc.enableByes(); mc.setMinByeSize(2);
+             * mc.setMaxByeSize(3);
+             */
 
             MatchSchedulerImpl ms = new MatchSchedulerImpl(new MaxSizeByeResolutionStrategy());
             List<Match> matches = ms.schedule(mc);
-    
+
             List<Match> finalMatches = MatchAnnealer.anneal(matches, 30);
-        
+
             for (MatchSerializer serializer : serializers) {
-                    serializer.serialize(finalMatches, Team.generateTeamList(finalMatches));
+                serializer.serialize(finalMatches, Team.generateTeamList(finalMatches));
             }
 
         }
