@@ -54,12 +54,6 @@ public class Main {
                 mc.setMaxByeSize(max_byes);
             }
 
-            /*
-             * mc.setNumberOfTeams(13); mc.setNumberOfMatches(23);
-             * mc.setTeamsPerMatch(4); mc.enableByes(); mc.setMinByeSize(2);
-             * mc.setMaxByeSize(3);
-             */
-
             MatchSchedulerImpl ms = new MatchSchedulerImpl(new MaxSizeByeResolutionStrategy());
             List<Match> matches = ms.schedule(mc);
 
