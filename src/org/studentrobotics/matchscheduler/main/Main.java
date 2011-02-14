@@ -45,7 +45,7 @@ public class Main {
             mc.setNumberOfTeams(num_teams);
             mc.setNumberOfMatches(num_matches);
             mc.setTeamsPerMatch(match_size);
-            if(byes=="true"){
+            if(byes.equals("true")){
                 mc.enableByes();
                 mc.setMinByeSize(min_byes);
                 mc.setMaxByeSize(max_byes);
