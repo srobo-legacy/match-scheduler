@@ -46,6 +46,12 @@ public class Main {
             mc.setNumberOfTeams(num_teams);
             mc.setNumberOfMatches(num_matches);
             mc.setTeamsPerMatch(match_size);
+            
+            if (num_teams < match_size) {
+                System.err.println("number of teams less than number of teams per match");
+                System.exit(1);
+            }
+            
             if (byes.equals("true")) {
                 int min_byes = Integer.parseInt(args[4]);
                 int max_byes = Integer.parseInt(args[5]);
