@@ -66,12 +66,14 @@ public class Main {
             List<Match> finalMatches = matches;
             if (num_matches > 1 && match_size != num_teams) {
                 int annealSeconds = 30;
-                System.err.println("hill climbing for " + annealSeconds + " seconds");
+                System.out.println("hill climbing for " + annealSeconds + " seconds");
                 finalMatches = MatchAnnealer.anneal(matches, annealSeconds);
             }
-
+            
+            List<Team> teams = Team.generateTeamList(finalMatches);
+            
             for (MatchSerializer serializer : serializers) {
-                serializer.serialize(finalMatches, Team.generateTeamList(finalMatches));
+                serializer.serialize(finalMatches, teams);
             }
 
         }

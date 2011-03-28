@@ -76,7 +76,7 @@ public class Match {
 	private List<Team> mTeamCache;
 
 	public List<Team> getTeams() {
-		return Collections.unmodifiableList(mTeamCache);
+	    return new ArrayList<Team>(mTeams);
 	}
 
 	public boolean hasTeam(Team team) {
