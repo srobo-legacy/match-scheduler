@@ -59,11 +59,15 @@ public class Main {
                 mc.setMinByeSize(min_byes);
                 mc.setMaxByeSize(max_byes);
             }
+            
 
             MatchSchedulerImpl ms = new MatchSchedulerImpl(new MaxSizeByeResolutionStrategy());
             List<Match> matches = ms.schedule(mc);
-
-            List<Match> finalMatches = MatchAnnealer.anneal(matches, 30);
+            
+            int annealSeconds = 30;
+            System.err.println("hill climbing for " + annealSeconds + " seconds");
+            List<Match> finalMatches = MatchAnnealer.anneal(matches, annealSeconds);
+            
 
             for (MatchSerializer serializer : serializers) {
                 serializer.serialize(finalMatches, Team.generateTeamList(finalMatches));
