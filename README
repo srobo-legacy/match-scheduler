@@ -1,0 +1,16 @@
+This is the Student Robotics match scheduler.
+
+Build:
+ ant jar
+
+Run:
+ matchscheduler <nteams> <nmatches> <tpm> <byes> [<min-tpm-b>] [<max-tpm-b>]
+
+Options:
+ nteams:    (uint) the number of teams overall
+ nmatches:  (uint) the total number of matches to be played
+ tpm:       (uint) the number of teams per match
+ byes:      (bool) whether or not to allow byes
+ min-tpm-b  (unit, optional) the minimum number of teams in a match with byes
+ max-tpm-b  (unit, optional) the maximum number of teams in a match with byes
+
