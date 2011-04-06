@@ -10,6 +10,7 @@ import java.util.TreeSet;
 
 public class Team implements Comparable<Team> {
 
+
 	public static List<Team> generateTeamList(List<Match> matches) {
 		SortedSet<Team> teams = new TreeSet<Team>();
 		for (Match m : matches) {
@@ -134,6 +135,5 @@ public class Team implements Comparable<Team> {
 	public String toString() {
 	    return "" + mNumber;
 	}
-	
 
 }

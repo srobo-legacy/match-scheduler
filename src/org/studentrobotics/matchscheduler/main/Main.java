@@ -35,14 +35,24 @@ public class Main {
             // add some serializers
             setupSerializers();
             MatchConstraints mc = parseArgConstraints(args);
-
             MatchSchedulerImpl ms = new MatchSchedulerImpl(new MaxSizeByeResolutionStrategy());
             List<Match> matches = ms.schedule(mc);
+            
+            int num_matches = mc.getNumberOfMatches();
+            int match_size = mc.getTeamsPerMatch();
+            int num_teams = mc.getNumberOfTeams();
 
-            List<Match> finalMatches = MatchAnnealer.anneal(matches, 30);
-
+            List<Match> finalMatches = matches;
+            if (num_matches > 1 && match_size != num_teams) {
+                int annealSeconds = 3;
+                System.out.println("hill climbing for " + annealSeconds + " seconds");
+                finalMatches = MatchAnnealer.anneal(matches, annealSeconds);
+            }
+            
+            List<Team> teams = Team.generateTeamList(finalMatches);
+            
             for (MatchSerializer serializer : serializers) {
-                serializer.serialize(finalMatches, Team.generateTeamList(finalMatches));
+                serializer.serialize(finalMatches, teams);
             }
 
         }

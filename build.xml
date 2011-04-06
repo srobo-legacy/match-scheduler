@@ -1,4 +1,4 @@
-<project>
+<project default="jar">
     <property name="src" location="src"/>
     <property name="bin" location="bin"/>
     <property name="deps" location="depends"/>
@@ -13,6 +13,7 @@
 
     <target name="clean">
         <delete dir="${bin}"/>
+        <delete file="scheduler.jar"/>
     </target>
 
     <target name="build">
