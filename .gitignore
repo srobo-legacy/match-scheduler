@@ -1,4 +1,4 @@
 bin
-scheduler.jar
+*.jar
 matches.csv
 matches.sql
