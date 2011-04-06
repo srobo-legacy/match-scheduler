@@ -49,21 +49,16 @@ public class MatchSchedulerImpl implements MatchScheduler {
     }
 
     private void makeMatches(int matches, int teamsPerMatch, List<Team> workingTeams) {
-        System.err.println(matches);
-        
+
         for (int i = 0; i < matches; i++) {
             Match m = new Match(i);
 
             for (int j = 0; j < teamsPerMatch; j++) {
-                System.err.println(workingTeams.size());
                 updateMatch(workingTeams, m);
-                System.err.println(workingTeams.size());
 
                 if (workingTeams.size() == 0) {
                     workingTeams = new ArrayList<Team>(mTeams);
                 }
-                System.err.println(workingTeams.size());
-                
 
             }
 
@@ -87,15 +82,14 @@ public class MatchSchedulerImpl implements MatchScheduler {
 
     public List<Match> reschedule(List<Match> upTo, MatchConstraints mc) {
         mMatches = upTo;
-        System.err.println(mc.getNumberOfTeams());
         generateTeams(mc);
         List<Team> teamCopy = new ArrayList(mTeams);
         makeMatches(mc.getNumberOfMatches(), mc.getTeamsPerMatch(), teamCopy);
-        
+
         if (mc.getAllowByes()) {
             mByeResoultionStrategy.resolve(mMatches, mTeams, mc);
         }
-        
+
         return mMatches;
 
     }
