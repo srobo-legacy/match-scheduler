@@ -19,10 +19,11 @@ public class MatchAnnealer {
 
     private static final boolean DEBUG = true;
 
-    public static List<Match> anneal(List<Match> matches, int seconds) {
+    public static List<Match> anneal(List<Match> matches, int seconds, int fixed) {
         // record when we started
         long now = System.currentTimeMillis();
 
+        
         List<Team> teams = Team.generateTeamList(matches);
 
         // working values for computations
@@ -39,9 +40,7 @@ public class MatchAnnealer {
 
         int k = 0, j = 0;
         while (System.currentTimeMillis() - now < seconds * 1000) {
-            for (int i = 0; i < RNG.nextInt(MUTATION_STEPS); i++) {
-                mutate(workingMatches, workingTeams);
-            }
+            roundMutate(workingTeams, workingMatches, fixed);
             // compute the new sum of opponents and the standard deviation of
             // match times
 
@@ -78,6 +77,12 @@ public class MatchAnnealer {
         return matches;
     }
 
+    private static void roundMutate(List<Team> workingTeams, List<Match> workingMatches, int fixed) {
+        for (int i = 0; i < RNG.nextInt(MUTATION_STEPS); i++) {
+            mutate(workingMatches, workingTeams, fixed);
+        }
+    }
+
     private static List<Match> matchCopy(List<Match> matches, List<Team> workingTeams) {
         List<Match> workingMatches = new ArrayList<Match>(matches.size());
         for (Match m : matches) {
@@ -102,8 +107,9 @@ public class MatchAnnealer {
         return currStdev;
     }
 
-    private static void mutate(List<Match> workingMatches, List<Team> workingTeams) {
+    private static void mutate(List<Match> workingMatches, List<Team> workingTeams, int unchangeableMatches) {
         // pick two random matches, swap one team in a for a team in b
+        workingMatches = workingMatches.subList(unchangeableMatches, workingMatches.size());
         int choice1 = RNG.nextInt(workingMatches.size());
         Match m1 = workingMatches.get(choice1);
 
