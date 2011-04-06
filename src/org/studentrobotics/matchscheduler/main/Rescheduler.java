@@ -13,12 +13,17 @@ import org.studentrobotics.matchscheduler.serializers.MsFileSerializer;
 
 public class Rescheduler {
     public static void main(String[] args) {
+        if (args.length != 5) {
+            System.err.println("usage is java -jar rescheduler.jar [matchfile] "
+                    + "[number of matches completed] [number of new matches to schedule] [number of teams] [number of teams per match]");
+            System.exit(1);
+        }
         String fileName = args[0];
         int completeMatches = Integer.parseInt(args[1]);
         int newMatches = Integer.parseInt(args[2]);
         int nTeams = Integer.parseInt(args[3]);
         int teamsPerMatch = Integer.parseInt(args[4]);
-        
+
         try {
             List<Match> passedMatches = new MsFileSerializer().parse(fileName);
             List<Match> upTo = passedMatches.subList(0, completeMatches);
@@ -29,7 +34,7 @@ public class Rescheduler {
             mc.setTeamsPerMatch(teamsPerMatch);
             mc.disableByes();
             List<Match> matches = msi.reschedule(upTo, mc);
-            matches = MatchAnnealer.anneal(matches, 3, completeMatches); 
+            matches = MatchAnnealer.anneal(matches, 3, completeMatches);
             MsFileSerializer msf = new MsFileSerializer();
             msf.serialize(matches, Team.generateTeamList(matches));
         } catch (FileNotFoundException fne) {
