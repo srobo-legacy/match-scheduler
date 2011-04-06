@@ -24,7 +24,7 @@
     <target name="jar" depends="build">
         <delete file="MANIFEST.MF"/>
         <manifest file="MANIFEST.MF">
-           <attribute name="Main-Class" value="org.studentrobotics.matchscheduler.main.Main"/>
+           <attribute name="Main-Class" value="org.studentrobotics.matchscheduler.main.SchedulerMain"/>
         </manifest>
         <jar destfile="scheduler.jar"
              basedir="${bin}"

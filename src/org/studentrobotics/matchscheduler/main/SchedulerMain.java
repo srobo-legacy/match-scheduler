@@ -14,14 +14,13 @@ import org.studentrobotics.matchscheduler.serializers.MsFileSerializer;
 import org.studentrobotics.matchscheduler.serializers.PrintMatchesSerializer;
 import org.studentrobotics.matchscheduler.serializers.TeamSerializer;
 
-public class Main {
+public class SchedulerMain {
     private static List<MatchSerializer> serializers = new ArrayList<MatchSerializer>();
 
     /**
      * @param args
      */
     public static void main(String[] args) {
-
         if (args.length != 6 && args.length != 4) {
             System.out.println("Wrong number of arguments");
             System.out.println("usage is: matchscheduler [nteams] [nmatches]"
