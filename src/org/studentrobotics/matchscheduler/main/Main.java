@@ -10,6 +10,7 @@ import org.studentrobotics.matchscheduler.scheduling.MatchConstraints;
 import org.studentrobotics.matchscheduler.scheduling.MatchSchedulerImpl;
 import org.studentrobotics.matchscheduler.scheduling.annealing.MatchAnnealer;
 import org.studentrobotics.matchscheduler.serializers.MatchSerializer;
+import org.studentrobotics.matchscheduler.serializers.MsFileSerializer;
 import org.studentrobotics.matchscheduler.serializers.PrintMatchesSerializer;
 import org.studentrobotics.matchscheduler.serializers.TeamSerializer;
 
@@ -32,27 +33,8 @@ public class Main {
         else {
 
             // add some serializers
-            serializers.add(new PrintMatchesSerializer());
-            serializers.add(new TeamSerializer());
-
-            int num_teams = Integer.parseInt(args[0]);
-            int num_matches = Integer.parseInt(args[1]);
-            int match_size = Integer.parseInt(args[2]);
-            String byes = args[3];
-
-            // setup match constraints
-            MatchConstraints mc = new MatchConstraints();
-
-            mc.setNumberOfTeams(num_teams);
-            mc.setNumberOfMatches(num_matches);
-            mc.setTeamsPerMatch(match_size);
-            if (byes.equals("true")) {
-                int min_byes = Integer.parseInt(args[4]);
-                int max_byes = Integer.parseInt(args[5]);
-                mc.enableByes();
-                mc.setMinByeSize(min_byes);
-                mc.setMaxByeSize(max_byes);
-            }
+            setupSerializers();
+            MatchConstraints mc = parseArgConstraints(args);
 
             MatchSchedulerImpl ms = new MatchSchedulerImpl(new MaxSizeByeResolutionStrategy());
             List<Match> matches = ms.schedule(mc);
@@ -65,6 +47,34 @@ public class Main {
 
         }
 
+    }
+
+    private static void setupSerializers() {
+        serializers.add(new PrintMatchesSerializer());
+        serializers.add(new TeamSerializer());
+        serializers.add(new MsFileSerializer());
+    }
+
+    private static MatchConstraints parseArgConstraints(String[] args) {
+        int num_teams = Integer.parseInt(args[0]);
+        int num_matches = Integer.parseInt(args[1]);
+        int match_size = Integer.parseInt(args[2]);
+        String byes = args[3];
+
+        // setup match constraints
+        MatchConstraints mc = new MatchConstraints();
+
+        mc.setNumberOfTeams(num_teams);
+        mc.setNumberOfMatches(num_matches);
+        mc.setTeamsPerMatch(match_size);
+        if (byes.equals("true")) {
+            int min_byes = Integer.parseInt(args[4]);
+            int max_byes = Integer.parseInt(args[5]);
+            mc.enableByes();
+            mc.setMinByeSize(min_byes);
+            mc.setMaxByeSize(max_byes);
+        }
+        return mc;
     }
 
 }
