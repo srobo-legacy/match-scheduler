@@ -16,17 +16,26 @@
         <delete file="scheduler.jar"/>
     </target>
 
-    <target name="build">
+    <target name="javac">
         <mkdir dir="${bin}"/>
         <javac srcdir="${src}" destdir="${bin}" includeantruntime="false"/>
     </target>
 
-    <target name="jar" depends="build">
+    <target name="build" depends="javac">
         <delete file="MANIFEST.MF"/>
         <manifest file="MANIFEST.MF">
            <attribute name="Main-Class" value="org.studentrobotics.matchscheduler.main.SchedulerMain"/>
         </manifest>
         <jar destfile="scheduler.jar"
+             basedir="${bin}"
+             includes="**/*.class"
+             manifest="MANIFEST.MF"
+        />
+        <delete file="MANIFEST.MF"/>
+        <manifest file="MANIFEST.MF">
+            <attribute name="Main-Class" value="org.studentrobotics.matchscheduler.main.Rescheduler"/>
+        </manifest>
+        <jar destfile="rescheduler.jar"
              basedir="${bin}"
              includes="**/*.class"
              manifest="MANIFEST.MF"
