@@ -2,9 +2,12 @@ package org.studentrobotics.matchscheduler.serializers;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,6 +16,34 @@ import org.studentrobotics.matchscheduler.Team;
 
 public class MsFileSerializer implements MatchSerializer {
 
+    private static Date sBase = new Date(2011, 4, 10, 10, 30);
+    
+    public Date getDateForMatchNumber(int n) {
+        Date d = new Date(sBase.getTime());
+        for (int i = 0; i < n; i++) {
+            int nowMin = d.getMinutes();
+            int nowHour = d.getHours();
+            if (nowHour == 12 && nowMin == 30) {
+                nowHour = 13;
+                nowMin = 5;
+            }
+            
+            if (nowMin == 50) {
+                nowMin = 0;
+                nowHour++;
+            } else if (nowMin == 55) {
+                nowMin = 5;
+                nowHour++;
+            } else {
+                nowMin += 10;
+            }
+            d.setMinutes(nowMin);
+            d.setHours(nowHour);
+        }
+        
+        return d; 
+    }
+    
     @Override
     public void serialize(List<Match> matches, List<Team> teams) {
         try {
@@ -21,6 +52,7 @@ public class MsFileSerializer implements MatchSerializer {
                     "matches.ms"));
             PrintStream ps = new PrintStream(bufferedOutput);
             Date d = new Date(2011, 4, 10, 10, 30);
+            int matchCount = 0;
             for (Match m : matches) {
 
                 ps.printf("%02d:%02d,", d.getHours(), d.getMinutes());
@@ -29,26 +61,8 @@ public class MsFileSerializer implements MatchSerializer {
                     if (i != m.getNumberOfTeams() - 1) ps.print(",");
 
                 }
-
-                int nowMin = d.getMinutes();
-                int nowHour = d.getHours();
-                if (nowHour == 12 && nowMin == 30) {
-                    nowHour = 13;
-                    nowMin = 5;
-                }
                 
-                if (nowMin == 50) {
-                    nowMin = 0;
-                    nowHour++;
-                } else if (nowMin == 55) {
-                    nowMin = 5;
-                    nowHour++;
-                } else {
-                    nowMin += 10;
-                }
-
-                d.setMinutes(nowMin);
-                d.setHours(nowHour);
+                d = getDateForMatchNumber(matchCount++);
 
                 ps.print("\n");
             }
