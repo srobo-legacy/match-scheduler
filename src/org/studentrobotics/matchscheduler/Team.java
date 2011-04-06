@@ -129,5 +129,11 @@ public class Team implements Comparable<Team> {
 	public int hashCode() {
 	    return mNumber;
 	}
+	
+	@Override
+	public String toString() {
+	    return "" + mNumber;
+	}
+	
 
 }
