@@ -22,7 +22,7 @@ public class Match {
      * sorted set is used here so that when we compare teams pairwise makes
      * sense
      */
-    private SortedSet<Team> mTeams = new TreeSet<Team>();
+    private List<Team> mTeams = new ArrayList<Team>();
 
     public Match(int matchNumber) {
         this.mMatchNumber = matchNumber;
@@ -113,6 +113,10 @@ public class Match {
             m.addTeam(t);
         }
         return m;
+    }
+
+    public int getCorner(Team t) {
+        return mTeams.indexOf(t);
     }
 
 }

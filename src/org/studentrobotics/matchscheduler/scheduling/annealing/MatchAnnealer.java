@@ -23,12 +23,13 @@ public class MatchAnnealer {
         // record when we started
         long now = System.currentTimeMillis();
 
-        
         List<Team> teams = Team.generateTeamList(matches);
 
         // working values for computations
         int opponentSum = computeOpponentSum(teams);
         float currStdev = stdevComputation(teams);
+        float cornerdev = computeSumOfTeamVariances(matches, teams);
+        
 
         // keep a seperate working list of teams
         // deep copy
@@ -49,6 +50,9 @@ public class MatchAnnealer {
             // stdev is the standard deviation of number of matches between each
             // match
             float newStdev = stdevComputation(workingTeams);
+            float newCornerDev = computeSumOfTeamVariances(workingMatches, workingTeams);
+            
+             
 
             // if the mutated match is better than the previous one, use it as
             // the new parent
@@ -56,11 +60,13 @@ public class MatchAnnealer {
             // standard deviation is lower, and we face more opponents
             // and one of the optimisations has changed.
             if (newStdev <= currStdev && newOpponentSum >= opponentSum
-                    && (newStdev != currStdev || newOpponentSum != opponentSum)) {
+                    && newCornerDev <= cornerdev
+                    && (newStdev != currStdev || newOpponentSum != opponentSum || newCornerDev != cornerdev)) {
                 currStdev = newStdev;
                 opponentSum = newOpponentSum;
                 matches = workingMatches;
                 teams = workingTeams;
+                cornerdev = newCornerDev;
                 j++;
             }
 
@@ -107,7 +113,8 @@ public class MatchAnnealer {
         return currStdev;
     }
 
-    private static void mutate(List<Match> workingMatches, List<Team> workingTeams, int unchangeableMatches) {
+    private static void mutate(List<Match> workingMatches, List<Team> workingTeams,
+            int unchangeableMatches) {
         // pick two random matches, swap one team in a for a team in b
         workingMatches = workingMatches.subList(unchangeableMatches, workingMatches.size());
         int choice1 = RNG.nextInt(workingMatches.size());
@@ -200,4 +207,31 @@ public class MatchAnnealer {
 
     }
 
+    private static float computeSumOfTeamVariances(List<Match> matches, List<Team> teams) {
+        float sum = 0;
+        for (Team t : teams) {
+            sum += computeTeamCornerDistribution(t, matches);
+        }
+        return sum;
+    }
+    
+    private static float computeTeamCornerDistribution(Team t, List<Match> matches) {
+        float sum_c = 0;
+        float sum_c_squares = 0;
+        float n = 0;
+        
+        for (Match m : matches) {
+            if (m.hasTeam(t)) {
+                int c = m.getCorner(t);
+                n++;
+                sum_c += c;
+                sum_c_squares += c*c;
+            }
+        }
+        
+        float mean = sum_c/n;
+        float variance = (sum_c_squares - (n * mean))/n-1;
+        
+        return variance;
+    }
 }
