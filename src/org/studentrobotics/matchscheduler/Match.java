@@ -105,4 +105,8 @@ public class Match {
 	    return mMatchNumber;
 	}
 
+    public static Match parse(String line) {
+        return null;    
+    }
+
 }
