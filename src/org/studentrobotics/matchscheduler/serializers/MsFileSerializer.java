@@ -59,7 +59,7 @@ public class MsFileSerializer implements MatchSerializer {
                     if (i != m.getNumberOfTeams() - 1) ps.print(",");
 
                 }
-                
+
                 d = getDateForMatchNumber(++matchCount);
 
                 ps.print("\n");
@@ -75,29 +75,27 @@ public class MsFileSerializer implements MatchSerializer {
 
     public List<Match> parse(String fileName) throws FileNotFoundException {
         File f = new File(fileName);
-        byte[] fileBytes = new byte[(int)f.length()];
+        byte[] fileBytes = new byte[(int) f.length()];
         FileReader fr = new FileReader(f);
         List<Match> result = new ArrayList<Match>();
         for (int i = 0; i < fileBytes.length; i++) {
             try {
-                fileBytes[i] = (byte)fr.read();
-                
-                
+                fileBytes[i] = (byte) fr.read();
+
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
                 System.exit(1);
             }
         }
-        
+
         String s = new String(fileBytes);
         String[] matchSpecs = s.split("\n");
         int i = 0;
         for (String line : matchSpecs) {
             result.add(Match.parse(line, i++));
         }
-        
-        
+
         return result;
     }
 
