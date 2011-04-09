@@ -17,33 +17,31 @@ import org.studentrobotics.matchscheduler.Team;
 public class MsFileSerializer implements MatchSerializer {
 
     private static Date sBase = new Date(2011, 4, 10, 10, 30);
-    
+
     public Date getDateForMatchNumber(int n) {
         Date d = new Date(sBase.getTime());
         for (int i = 0; i < n; i++) {
             int nowMin = d.getMinutes();
             int nowHour = d.getHours();
-            if (nowHour == 12 && nowMin == 30) {
+            if (nowHour == 12 && nowMin >= 24) {
                 nowHour = 13;
-                nowMin = 5;
-            }
-            
-            if (nowMin == 50) {
-                nowMin = 0;
-                nowHour++;
-            } else if (nowMin == 55) {
-                nowMin = 5;
-                nowHour++;
+                nowMin = 15;
             } else {
-                nowMin += 10;
+
+                nowMin += 7;
+                if (nowMin > 60) {
+                    nowHour++;
+                    nowMin = nowMin % 60;
+                }
+
             }
             d.setMinutes(nowMin);
             d.setHours(nowHour);
         }
-        
-        return d; 
+
+        return d;
     }
-    
+
     @Override
     public void serialize(List<Match> matches, List<Team> teams) {
         try {
