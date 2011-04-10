@@ -43,7 +43,7 @@ public class SchedulerMain {
 
             List<Match> finalMatches = matches;
             if (num_matches > 1 && match_size != num_teams) {
-                int annealSeconds = 3;
+                int annealSeconds = 300;
                 System.out.println("hill climbing for " + annealSeconds + " seconds");
                 finalMatches = MatchAnnealer.anneal(matches, annealSeconds, 0);
             }
