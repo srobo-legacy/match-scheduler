@@ -12,4 +12,6 @@ public interface MatchScheduler {
 	 * @return
 	 */
 	public List<Match> schedule(MatchConstraints matchConstraints);
+
+    public List<Match> reschedule(List<Match> upTo, MatchConstraints mc);
 }
