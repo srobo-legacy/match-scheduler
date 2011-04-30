@@ -113,4 +113,8 @@ public class Match {
         return mTeams.indexOf(t);
     }
 
+    public void setNumber(int i) {
+        mMatchNumber = i;
+    }
+
 }
