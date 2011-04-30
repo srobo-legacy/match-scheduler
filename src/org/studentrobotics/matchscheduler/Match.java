@@ -20,6 +20,7 @@ public class Match {
      * sense
      */
     private List<Team> mTeams = new ArrayList<Team>();
+    private boolean[] mMemberShips = new boolean[128];
 
     public Match(int matchNumber) {
         this.mMatchNumber = matchNumber;
@@ -48,6 +49,8 @@ public class Match {
     public void addTeam(Team t) {
 
         if (mWorkingCapacity == UNDEFINED_CAPACITY || mWorkingCapacity >= mTeams.size() + 1) {
+            
+            mMemberShips[t.getNumber()] = true;
             this.mTeams.add(t);
             updateTeamCache();
         } else {
@@ -71,11 +74,12 @@ public class Match {
     }
 
     public boolean hasTeam(Team team) {
-        return mTeams.contains(team);
+        return mMemberShips[team.getNumber()];
     }
 
     public void removeTeam(Team t) {
         if (mTeams.contains(t)) {
+            mMemberShips[t.getNumber()] = false;
             mTeams.remove(t);
         } else {
             throw new IllegalArgumentException("passed team not in this match");
