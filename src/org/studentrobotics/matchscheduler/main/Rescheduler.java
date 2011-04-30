@@ -5,10 +5,9 @@ import java.util.List;
 
 import org.studentrobotics.matchscheduler.Match;
 import org.studentrobotics.matchscheduler.Team;
-import org.studentrobotics.matchscheduler.byeresolver.MaxSizeByeResolutionStrategy;
+import org.studentrobotics.matchscheduler.scheduling.GreedyScheduler;
 import org.studentrobotics.matchscheduler.scheduling.MatchConstraints;
-import org.studentrobotics.matchscheduler.scheduling.MatchSchedulerImpl;
-import org.studentrobotics.matchscheduler.scheduling.annealing.MatchAnnealer;
+import org.studentrobotics.matchscheduler.scheduling.MatchScheduler;
 import org.studentrobotics.matchscheduler.serializers.MsFileSerializer;
 
 public class Rescheduler {
@@ -27,14 +26,13 @@ public class Rescheduler {
         try {
             List<Match> passedMatches = new MsFileSerializer().parse(fileName);
             List<Match> upTo = passedMatches.subList(0, completeMatches);
-            MatchSchedulerImpl msi = new MatchSchedulerImpl(new MaxSizeByeResolutionStrategy());
+            MatchScheduler msi = new GreedyScheduler();
             MatchConstraints mc = new MatchConstraints();
             mc.setNumberOfMatches(newMatches);
             mc.setNumberOfTeams(nTeams);
             mc.setTeamsPerMatch(teamsPerMatch);
             mc.disableByes();
             List<Match> matches = msi.reschedule(upTo, mc);
-            matches = MatchAnnealer.anneal(matches, 3, completeMatches);
             MsFileSerializer msf = new MsFileSerializer();
             msf.serialize(matches, Team.generateTeamList(matches));
         } catch (FileNotFoundException fne) {

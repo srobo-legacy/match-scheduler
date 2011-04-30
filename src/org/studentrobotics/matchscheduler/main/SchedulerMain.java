@@ -5,14 +5,12 @@ import java.util.List;
 
 import org.studentrobotics.matchscheduler.Match;
 import org.studentrobotics.matchscheduler.Team;
-import org.studentrobotics.matchscheduler.byeresolver.MaxSizeByeResolutionStrategy;
+import org.studentrobotics.matchscheduler.scheduling.GreedyScheduler;
 import org.studentrobotics.matchscheduler.scheduling.MatchConstraints;
-import org.studentrobotics.matchscheduler.scheduling.MatchSchedulerImpl;
-import org.studentrobotics.matchscheduler.scheduling.annealing.MatchAnnealer;
+import org.studentrobotics.matchscheduler.scheduling.MatchScheduler;
 import org.studentrobotics.matchscheduler.serializers.MatchSerializer;
 import org.studentrobotics.matchscheduler.serializers.MsFileSerializer;
 import org.studentrobotics.matchscheduler.serializers.PrintMatchesSerializer;
-import org.studentrobotics.matchscheduler.serializers.TeamSerializer;
 
 public class SchedulerMain {
     private static List<MatchSerializer> serializers = new ArrayList<MatchSerializer>();
@@ -34,22 +32,11 @@ public class SchedulerMain {
             // add some serializers
             setupSerializers();
             MatchConstraints mc = parseArgConstraints(args);
-            MatchSchedulerImpl ms = new MatchSchedulerImpl(new MaxSizeByeResolutionStrategy());
+            MatchScheduler ms = new GreedyScheduler();
             List<Match> matches = ms.schedule(mc);
-            
-            int num_matches = mc.getNumberOfMatches();
-            int match_size = mc.getTeamsPerMatch();
-            int num_teams = mc.getNumberOfTeams();
-
             List<Match> finalMatches = matches;
-            if (num_matches > 1 && match_size != num_teams) {
-                int annealSeconds = 300;
-                System.out.println("hill climbing for " + annealSeconds + " seconds");
-                finalMatches = MatchAnnealer.anneal(matches, annealSeconds, 0);
-            }
-            
             List<Team> teams = Team.generateTeamList(finalMatches);
-            
+
             for (MatchSerializer serializer : serializers) {
                 serializer.serialize(finalMatches, teams);
             }
@@ -60,7 +47,6 @@ public class SchedulerMain {
 
     private static void setupSerializers() {
         serializers.add(new PrintMatchesSerializer());
-        serializers.add(new TeamSerializer());
         serializers.add(new MsFileSerializer());
     }
 
