@@ -1,10 +1,7 @@
 package org.studentrobotics.matchscheduler;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 public class Match {
     private int mMatchNumber;
@@ -51,13 +48,7 @@ public class Match {
     public void addTeam(Team t) {
 
         if (mWorkingCapacity == UNDEFINED_CAPACITY || mWorkingCapacity >= mTeams.size() + 1) {
-            for (Team tExisting : this.mTeams) {
-                tExisting.addOpposition(t, this);
-                t.addOpposition(tExisting, this);
-            }
-
             this.mTeams.add(t);
-            t.addMatch(this);
             updateTeamCache();
         } else {
             throw new IllegalArgumentException("this match is already full");
@@ -85,7 +76,6 @@ public class Match {
 
     public void removeTeam(Team t) {
         if (mTeams.contains(t)) {
-            t.notifyNotInMatch(this);
             mTeams.remove(t);
         } else {
             throw new IllegalArgumentException("passed team not in this match");
