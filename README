@@ -1,7 +1,7 @@
 This is the Student Robotics match scheduler.
 
 Build:
- ant jar
+ build with the makefile
 
 Run:
  matchscheduler <nteams> <nmatches> <tpm> <byes> [<min-tpm-b>] [<max-tpm-b>]
