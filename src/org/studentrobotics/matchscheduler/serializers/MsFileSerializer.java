@@ -8,7 +8,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.studentrobotics.matchscheduler.Match;
@@ -16,87 +15,61 @@ import org.studentrobotics.matchscheduler.Team;
 
 public class MsFileSerializer implements MatchSerializer {
 
-    private static Date sBase = new Date(2011, 4, 10, 10, 30);
+	@Override
+	public void serialize(List<Match> matches, List<Team> teams) {
+		try {
 
-    public Date getDateForMatchNumber(int n) {
-        Date d = new Date(sBase.getTime());
-        for (int i = 0; i < n; i++) {
-            int nowMin = d.getMinutes();
-            int nowHour = d.getHours();
-            if (nowHour == 12 && nowMin >= 24) {
-                nowHour = 13;
-                nowMin = 15;
-            } else {
+			BufferedOutputStream bufferedOutput = new BufferedOutputStream(
+					new FileOutputStream("matches.ms"));
+			PrintStream ps = new PrintStream(bufferedOutput);
 
-                nowMin += 7;
-                if (nowMin > 60) {
-                    nowHour++;
-                    nowMin = nowMin % 60;
-                }
+			int startTime = 0;
+			for (Match m : matches) {
 
-            }
-            d.setMinutes(nowMin);
-            d.setHours(nowHour);
-        }
+				ps.printf("%d,", startTime);
+				startTime += 7;
+				for (int i = 0; i < m.getNumberOfTeams(); i++) {
+					ps.print(m.getTeams().get(i));
+					if (i != m.getNumberOfTeams() - 1)
+						ps.print(",");
 
-        return d;
-    }
+				}
 
-    @Override
-    public void serialize(List<Match> matches, List<Team> teams) {
-        try {
+				ps.print("\n");
+			}
+			ps.flush();
+			ps.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-            BufferedOutputStream bufferedOutput = new BufferedOutputStream(new FileOutputStream(
-                    "matches.ms"));
-            PrintStream ps = new PrintStream(bufferedOutput);
-            Date d = new Date(2011, 4, 10, 10, 30);
-            int matchCount = 0;
-            for (Match m : matches) {
+	}
 
-                ps.printf("%02d:%02d,", d.getHours(), d.getMinutes());
-                for (int i = 0; i < m.getNumberOfTeams(); i++) {
-                    ps.print(m.getTeams().get(i));
-                    if (i != m.getNumberOfTeams() - 1) ps.print(",");
+	public List<Match> parse(String fileName) throws FileNotFoundException {
+		File f = new File(fileName);
+		byte[] fileBytes = new byte[(int) f.length()];
+		FileReader fr = new FileReader(f);
+		List<Match> result = new ArrayList<Match>();
+		for (int i = 0; i < fileBytes.length; i++) {
+			try {
+				fileBytes[i] = (byte) fr.read();
 
-                }
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				System.exit(1);
+			}
+		}
 
-                d = getDateForMatchNumber(++matchCount);
+		String s = new String(fileBytes);
+		String[] matchSpecs = s.split("\n");
+		int i = 0;
+		for (String line : matchSpecs) {
+			result.add(Match.parse(line, i++));
+		}
 
-                ps.print("\n");
-            }
-            ps.flush();
-            ps.close();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-    }
-
-    public List<Match> parse(String fileName) throws FileNotFoundException {
-        File f = new File(fileName);
-        byte[] fileBytes = new byte[(int) f.length()];
-        FileReader fr = new FileReader(f);
-        List<Match> result = new ArrayList<Match>();
-        for (int i = 0; i < fileBytes.length; i++) {
-            try {
-                fileBytes[i] = (byte) fr.read();
-
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                System.exit(1);
-            }
-        }
-
-        String s = new String(fileBytes);
-        String[] matchSpecs = s.split("\n");
-        int i = 0;
-        for (String line : matchSpecs) {
-            result.add(Match.parse(line, i++));
-        }
-
-        return result;
-    }
+		return result;
+	}
 
 }
