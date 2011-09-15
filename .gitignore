@@ -2,3 +2,6 @@ bin
 *.jar
 matches.csv
 matches.sql
+.classpath
+.project
+matches.ms
