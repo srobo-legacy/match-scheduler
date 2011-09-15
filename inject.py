@@ -33,7 +33,7 @@ def main():
     matches = open("matches.ms").read().split("\n")[:-1]
     for line in matches:
         match_start_time = line.split(",")[0]
-        match_start_time = int(match_start_time) + int(start)
+        match_start_time = int(match_start_time) * 60 + int(start)
         line = str(match_start_time) + "," + ",".join(line.split(",")[1:])
         update_matches(line.strip())
     print "match schedule insertion complete"
