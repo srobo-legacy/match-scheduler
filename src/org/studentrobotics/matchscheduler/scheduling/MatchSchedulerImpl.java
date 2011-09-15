@@ -83,7 +83,7 @@ public class MatchSchedulerImpl implements MatchScheduler {
     public List<Match> reschedule(List<Match> upTo, MatchConstraints mc) {
         mMatches = upTo;
         generateTeams(mc);
-        List<Team> teamCopy = new ArrayList(mTeams);
+        List<Team> teamCopy = new ArrayList<Team>(mTeams);
         makeMatches(mc.getNumberOfMatches(), mc.getTeamsPerMatch(), teamCopy);
 
         if (mc.getAllowByes()) {
