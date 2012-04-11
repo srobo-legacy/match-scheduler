@@ -23,11 +23,8 @@ public class MsFileSerializer implements MatchSerializer {
 					new FileOutputStream("matches.ms"));
 			PrintStream ps = new PrintStream(bufferedOutput);
 
-			int startTime = 0;
+			
 			for (Match m : matches) {
-
-				ps.printf("%d,", startTime);
-				startTime += 7;
 				for (int i = 0; i < m.getNumberOfTeams(); i++) {
 					ps.print(m.getTeams().get(i));
 					if (i != m.getNumberOfTeams() - 1)
