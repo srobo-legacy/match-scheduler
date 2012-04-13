@@ -102,7 +102,7 @@ public class Match {
     public static Match parse(String line, int i) {
         String[] split = line.split(",");
         Match m = new Match(i);
-        for (int j = 0; j < 4; j++) {
+        for (int j = 0; j < 4                  ; j++) {
             Team t = new Team(Integer.parseInt(split[j]));
             m.addTeam(t);
         }

@@ -28,23 +28,18 @@ public class GreedyScheduler implements MatchScheduler {
 
     @Override
     public List<Match> reschedule(List<Match> upTo, MatchConstraints mc) {
+        for (int i = 0; i < mc.getNumberOfTeams(); i++) {
+            mTeams.add(new Team(i));
+        }
         createMatches(mc, upTo, new Match[TEST_MATCHES], upTo.size());
-        System.err.println("pre shuffle"
-                + new SpacedGamesDecider().computeStdevSum(upTo, mTeams));
         upTo = bestShuffle(upTo);
-        System.err.println("post shuffle"
-                + new SpacedGamesDecider().computeStdevSum(upTo, mTeams));
         return upTo;
     }
 
     @Override
     public List<Match> schedule(MatchConstraints matchConstraints) {
         List<Match> schedule = greedyGenerate(matchConstraints);
-        System.err.println("pre shuffle"
-                + new SpacedGamesDecider().computeStdevSum(schedule, mTeams));
         schedule = bestShuffle(schedule);
-        System.err.println("post shuffle"
-                + new SpacedGamesDecider().computeStdevSum(schedule, mTeams));
         return schedule;
     }
 
@@ -102,14 +97,13 @@ public class GreedyScheduler implements MatchScheduler {
         Match[] workingMatches = new Match[TEST_MATCHES];
         createMatches(matchConstraints, result, workingMatches, 0);
 
-        System.err.println(new AllVAllDecider().computeOppositionSum(result, mTeams));
-        System.err.println(new SumMatchesDecider().getMatchCountStdev(result, mTeams));
 
         return result;
     }
 
     private void createMatches(MatchConstraints matchConstraints, List<Match> result,
             Match[] workingMatches, int n) {
+        
         int matchNumber = n;
         while (result.size() < matchConstraints.getNumberOfMatches()) {
             fillMatches(workingMatches, matchConstraints, matchNumber++);
